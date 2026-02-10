@@ -1,27 +1,97 @@
-<!DOCTYPE html>
+<?php
+if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
+/** @var CMain $APPLICATION */
+?><!doctype html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-        }
-
-        .full-width-img {
-            /* Занимает 100% ширины родителя (экрана) */
-            width: 100%;
-            /* Высота подстраивается автоматически, сохраняя пропорции */
-            height: auto;
-            /* Убирает возможный зазор снизу под картинкой */
-            display: block;
-        }
-    </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><?php $APPLICATION->ShowTitle(); ?></title>
+    <?php $APPLICATION->ShowHead(); ?>
+	<link rel="stylesheet" href="https://centrleto.ru/local/templates/main/style.css">
 </head>
 <body>
+<?php $APPLICATION->ShowPanel(); ?>
 
-    <img src="https://megabitee.github.io/green-wave/v3.png" alt="Описание фото" class="full-width-img">
+<header class="site-header">
 
-</body>
-</html>
+    <!-- Верхняя серая полоса -->
+    <div class="topbar">
+        <div class="container topbar__inner">
+            <div class="topbar__left">
+                <span class="topbar__item">г. Волгоград, ул. 7 Гвардейской, 13</span>
+                <span class="topbar__sep">|</span>
+                <a class="topbar__item" href="mailto:office@centrleto.ru">office@centrleto.ru</a>
+            </div>
+
+            <div class="topbar__right">
+                <form class="top-search" action="/search/" method="get">
+                    <input class="top-search__input" type="text" name="q" placeholder="Поиск">
+                </form>
+            </div>
+        </div>
+    </div>
+<!--
+  <div class="logo-row">
+     <div class="container">
+         <div class="logo">
+             <a href="/">
+                 <img src="/centrleto/logo_v2.png" alt="Центр Лето">
+             </a>
+         </div>
+      </div>
+  </div>
+-->
+
+    <!-- Оранжевое меню -своё битрикс меню кидает в ошибку-->
+    <?php
+    $uri = $_SERVER['REQUEST_URI'] ?? '/';
+    $uri = preg_replace('/\?.*$/', '', $uri);
+
+    $menu = [
+        ['Каталог лагерей', 'centrleto/camp/'],
+        ['Родителям и детям', '/parents/'],
+		['Программы лагерей', '/centrleto/smeny/'],
+        ['Методическая библиотека', '/certificates/'],
+        ['О нас', '/about/'],
+    ];
+
+    function isActiveMenuItem(string $link, string $uri): bool {
+        if ($link === '/') return $uri === '/';
+        return strpos($uri, $link) === 0;
+    }
+    ?>
+
+    <nav class="mainnav">
+        <div class="container">
+            <ul class="nav">
+                <?php foreach ($menu as [$title, $link]): ?>
+                    <li class="nav__item">
+                        <a class="nav__link <?= isActiveMenuItem($link, $uri) ? 'is-active' : '' ?>"
+                           href="<?= htmlspecialchars($link) ?>">
+                            <?= htmlspecialchars($title) ?>
+                        </a>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    </nav>
+
+</header>
+
+<?php
+// полоса с баннером на главной
+$page = $APPLICATION->GetCurPage(false);
+$isHome = ($page === '/' || $page === '/centrleto/');
+?>
+
+<?php if ($isHome): ?>
+<div class="site-band">
+    <div class="container">
+        <img src="/centrleto/banner_fix.jpg" alt="Баннер" class="site-band__img">
+    </div>
+</div>
+<?php endif; ?>
+
+<main class="page">
+  <div class="content">
